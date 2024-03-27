@@ -7,43 +7,32 @@ import Filter from './Filter/Filter';
 import { MainBlock } from './App.styled';
 
 const App = () => {
-  const [contacts, setContacts] = useState([]);
-  const [arrFilter, setArrFilter] = useState([]);
+  const [contacts, setContacts] = useState(() => {
+    const arrContacts = localStorage.getItem('contacts');
+    if (arrContacts) {
+      return JSON.parse(arrContacts);
+    }
+  });
+
   const [filter, setFilter] = useState('');
 
   useEffect(() => {
-    const arrContacts = localStorage.getItem('contacts');
-    if (arrContacts) {
-      setContacts(JSON.parse(arrContacts));
-    }
-  }, []);
-
-  useEffect(() => {
-    contacts.length &&
-      localStorage.setItem('contacts', JSON.stringify(contacts));
+    contacts && localStorage.setItem('contacts', JSON.stringify(contacts));
   }, [contacts]);
 
-  useEffect(() => {
-    if (contacts.length) {
-      const textFilter = filter.toLowerCase();
-      setArrFilter(
-        contacts.filter(({ name }) => name.toLowerCase().includes(textFilter))
-      );
-    }
-  }, [filter, contacts]);
-
   const addContact = ({ name, number }) => {
-    const findContact = contacts.find(el => el.name === name);
-    if (findContact) {
-      alert(name + ' is already in contacts');
-      return;
+    if (contacts) {
+      const findContact = contacts.find(el => el.name === name);
+      if (findContact) {
+        alert(name + ' is already in contacts');
+        return;
+      }
     }
     const newId = nanoid();
     const newObj = { id: newId, name, number };
 
-    setContacts(contacts =>
-      !contacts.length ? [newObj] : [...contacts, newObj]
-    );
+    setContacts(contacts => (!contacts ? [newObj] : [...contacts, newObj]));
+    console.log('contacts: ', [newObj]);
   };
 
   const deleteContact = deleteId =>
@@ -58,7 +47,13 @@ const App = () => {
 
       <h2>Contacts</h2>
       <Filter filterChange={filterChange} filterValue={filter} />
-      <ContactList contacts={arrFilter} deleteId={deleteContact} />
+      {contacts && (
+        <ContactList
+          contacts={contacts}
+          textFilter={filter}
+          deleteId={deleteContact}
+        />
+      )}
     </MainBlock>
   );
 };

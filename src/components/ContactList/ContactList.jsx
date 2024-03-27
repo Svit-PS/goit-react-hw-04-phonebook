@@ -1,10 +1,14 @@
 import Contact from './Contact';
 import PropTypes from 'prop-types';
 
-const ContactList = ({ contacts, deleteId }) => {
+const ContactList = ({ contacts, textFilter, deleteId }) => {
+  const arrFilter = contacts.filter(({ name }) =>
+    name.toLowerCase().includes(textFilter)
+  );
+
   return (
     <ul>
-      {contacts.map(({ id, name, number }) => (
+      {arrFilter.map(({ id, name, number }) => (
         <Contact
           key={id}
           id={id}
