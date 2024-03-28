@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 const ContactList = ({ contacts, textFilter, deleteId }) => {
   const arrFilter = contacts.filter(({ name }) =>
-    name.toLowerCase().includes(textFilter)
+    name.toLowerCase().includes(textFilter.toLowerCase())
   );
 
   return (
